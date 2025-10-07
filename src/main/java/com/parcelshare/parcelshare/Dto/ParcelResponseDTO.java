@@ -9,14 +9,16 @@ import java.util.List;
 
 @Data
 public class ParcelResponseDTO {
-    public ParcelResponseDTO(int id, Traveler parcels) {
-        this.id = id;
-        Parcels = parcels;
+
+    public ParcelResponseDTO(Parcel parcel, Traveler traveler) {
+        this.parcel = parcel;
+        this.traveler = traveler;
     }
+
+    Parcel parcel;
+    Traveler traveler;
+
     public ParcelResponseDTO() {
+
     }
-
-    int id;
-    Traveler Parcels;
-
 }

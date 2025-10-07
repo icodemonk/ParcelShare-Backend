@@ -38,9 +38,9 @@ public class ParcelMatchController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','PARCEL')")
-    @GetMapping("prequest/{creatorid}")
-    public List<ParcelResponseDTO> getallParcelRequest(@PathVariable int creatorid){
-        return service.ParcelRequest(creatorid);
+    @GetMapping("prequest/{user}")
+    public List<ParcelResponseDTO> getallParcelRequest(@PathVariable int user){
+        return service.ParcelRequest(user);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','PARCEL')")
@@ -48,6 +48,12 @@ public class ParcelMatchController {
     public List<ParcelResponseDTO> getallParcelMatched(@PathVariable int creatorid){
         return service.Parcelmatched(creatorid);
     }
+    @PreAuthorize("hasAnyRole('ADMIN','PARCEL')")
+    @GetMapping("parequest/{user}")
+    public List<ParcelResponseDTO> AcceptedParcelRequest(@PathVariable int user){
+        return service.AcceptedRequest(user);
+    }
+
 
     @PreAuthorize("hasAnyRole('ADMIN','PARCEL')")
     @PostMapping("/updatepreject")

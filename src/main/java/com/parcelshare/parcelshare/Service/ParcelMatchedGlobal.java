@@ -79,32 +79,53 @@ public class ParcelMatchedGlobal {
 
 //    filter request recived for parcel
 
-    public List<ParcelResponseDTO> ParcelRequest(int creatorid) {
-        int id = creatorid;
-        List<ParcelMatch> TravelerMatchbyidall = repository.findByParcelid(id);
-        List<ParcelResponseDTO> traveler = new ArrayList<>();
-        for (ParcelMatch pm : TravelerMatchbyidall) {
-            if (pm.getTraveler() == ParcelMatchTraveler.ACCEPTED && pm.getStatus()==Stat.PENDING) {
-                ParcelResponseDTO parcelResponseDTO = new ParcelResponseDTO(pm.getId(),travelerRepo.findById(pm.getParcelid()));
-               traveler.add(parcelResponseDTO);
+    public List<ParcelResponseDTO> ParcelRequest(int user) {
+        List<ParcelMatch> TravelerMatchbyidall = repository.findByParcelid(user);
+        List<ParcelResponseDTO> filter = new ArrayList<>();
+        for (ParcelMatch parcelMatch : TravelerMatchbyidall) {
+            if(parcelMatch.getTraveler() == ParcelMatchTraveler.ACCEPTED && parcelMatch.getCourier()==ParcelMatchedCourier.NODATA) {
+                Traveler traveler = new Traveler();
+                traveler = travelerRepo.findById(parcelMatch.getTravelerid());
+                Parcel parcel = new Parcel();
+                parcel = parcelRepo.findByid(parcelMatch.getParcelid());
+                ParcelResponseDTO dto = new ParcelResponseDTO(parcel, traveler);
+                filter.add(dto);
             }
         }
-        return traveler;
+        return filter;
     }
 
     public List<ParcelResponseDTO> Parcelmatched(int creatorid) {
         int id = creatorid;
         List<ParcelMatch> TravelerMatchbyidall = repository.findByParcelid(id);
-        List<ParcelResponseDTO> traveler = new ArrayList<>();
-        for (ParcelMatch pm : TravelerMatchbyidall) {
-            if (pm.getCourier() == ParcelMatchedCourier.ACCEPTED && pm.getStatus()==Stat.MATCHED) {
-                ParcelResponseDTO parcelResponseDTO = new ParcelResponseDTO(pm.getId(),travelerRepo.findById(pm.getParcelid()));
-                traveler.add(parcelResponseDTO);
+        List<ParcelResponseDTO> filter = new ArrayList<>();
+        for (ParcelMatch parcelMatch : TravelerMatchbyidall) {
+            if (parcelMatch.getCourier() == ParcelMatchedCourier.ACCEPTED && parcelMatch.getTraveler() == ParcelMatchTraveler.ACCEPTED) {
+                Traveler traveler = new Traveler();
+                traveler = travelerRepo.findById(parcelMatch.getTravelerid());
+                Parcel parcel = new Parcel();
+                parcel = parcelRepo.findByid(parcelMatch.getParcelid());
+                ParcelResponseDTO dto = new ParcelResponseDTO(parcel, traveler);
+                filter.add(dto);
             }
         }
-        return traveler;
+        return filter;
     }
-
+    public List<ParcelResponseDTO> AcceptedRequest(int user) {
+        List<ParcelMatch> TravelerMatchbyidall = repository.findByParcelid(user);
+        List<ParcelResponseDTO> filter = new ArrayList<>();
+        for (ParcelMatch parcelMatch : TravelerMatchbyidall) {
+            if(parcelMatch.getTraveler() == ParcelMatchTraveler.ACCEPTED && parcelMatch.getCourier()==ParcelMatchedCourier.ACCEPTED) {
+                Traveler traveler = new Traveler();
+                traveler = travelerRepo.findById(parcelMatch.getTravelerid());
+                Parcel parcel = new Parcel();
+                parcel = parcelRepo.findByid(parcelMatch.getParcelid());
+                ParcelResponseDTO dto = new ParcelResponseDTO(parcel, traveler);
+                filter.add(dto);
+            }
+        }
+        return filter;
+    }
 //    --------------------------UPDATE STAT----------------------------------
    public void updateStattoPending(int id){
         ParcelMatch parcelMatch = repository.findById(id);
@@ -123,6 +144,7 @@ public class ParcelMatchedGlobal {
         if (parcelMatch.getCourier() == ParcelMatchedCourier.ACCEPTED) {
             parcelMatch.setCourier(ParcelMatchedCourier.NODATA);
             parcelMatch.setStatus(Stat.PENDING);
+            repository.save(parcelMatch);
             return "SUCCESSFULLY REJECTED";
         }
         else {
