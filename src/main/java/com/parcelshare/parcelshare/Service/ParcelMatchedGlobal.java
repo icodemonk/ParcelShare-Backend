@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ParcelMatchedGlobal {
@@ -88,15 +87,15 @@ public class ParcelMatchedGlobal {
                 traveler = travelerRepo.findById(parcelMatch.getTravelerid());
                 Parcel parcel = new Parcel();
                 parcel = parcelRepo.findByid(parcelMatch.getParcelid());
-                ParcelResponseDTO dto = new ParcelResponseDTO(parcel, traveler);
+                ParcelResponseDTO dto = new ParcelResponseDTO(parcel, traveler ,parcelMatch.getId());
                 filter.add(dto);
             }
         }
         return filter;
     }
 
-    public List<ParcelResponseDTO> Parcelmatched(int creatorid) {
-        int id = creatorid;
+    public List<ParcelResponseDTO> Parcelmatched(int user) {
+        int id = user;
         List<ParcelMatch> TravelerMatchbyidall = repository.findByParcelid(id);
         List<ParcelResponseDTO> filter = new ArrayList<>();
         for (ParcelMatch parcelMatch : TravelerMatchbyidall) {
@@ -105,7 +104,7 @@ public class ParcelMatchedGlobal {
                 traveler = travelerRepo.findById(parcelMatch.getTravelerid());
                 Parcel parcel = new Parcel();
                 parcel = parcelRepo.findByid(parcelMatch.getParcelid());
-                ParcelResponseDTO dto = new ParcelResponseDTO(parcel, traveler);
+                ParcelResponseDTO dto = new ParcelResponseDTO(parcel, traveler,parcelMatch.getId());
                 filter.add(dto);
             }
         }
@@ -120,27 +119,16 @@ public class ParcelMatchedGlobal {
                 traveler = travelerRepo.findById(parcelMatch.getTravelerid());
                 Parcel parcel = new Parcel();
                 parcel = parcelRepo.findByid(parcelMatch.getParcelid());
-                ParcelResponseDTO dto = new ParcelResponseDTO(parcel, traveler);
+                ParcelResponseDTO dto = new ParcelResponseDTO(parcel, traveler , parcelMatch.getId());
                 filter.add(dto);
             }
         }
         return filter;
     }
-//    --------------------------UPDATE STAT----------------------------------
-   public void updateStattoPending(int id){
-        ParcelMatch parcelMatch = repository.findById(id);
-        parcelMatch.setStatus(Stat.PENDING);
-        repository.save(parcelMatch);
-   }
-   public void updateStattoMatched(int id){
-        ParcelMatch parcelMatch = repository.findById(id);
-        parcelMatch.setStatus(Stat.MATCHED);
-        repository.save(parcelMatch);
-   }
    //----------------------------Update ParcelMatchedourier------------------------
 
-    public String updateParcelToReject(int id){
-        ParcelMatch parcelMatch = repository.findById(id);
+    public String updateParcelToReject(int parcelid){
+        ParcelMatch parcelMatch = repository.findById(parcelid);
         if (parcelMatch.getCourier() == ParcelMatchedCourier.ACCEPTED) {
             parcelMatch.setCourier(ParcelMatchedCourier.NODATA);
             parcelMatch.setStatus(Stat.PENDING);
@@ -151,19 +139,20 @@ public class ParcelMatchedGlobal {
             return "FAILED TO REJECT - Cause : you have never accepted this request";
         }
     }
-    public String updateParcelToAccept(int id){
-        ParcelMatch parcelMatch = repository.findById(id);
-        if(parcelMatch.getTraveler()==ParcelMatchTraveler.ACCEPTED) {
-            if (parcelMatch.getCourier() == ParcelMatchedCourier.NODATA) {
-                parcelMatch.setCourier(ParcelMatchedCourier.ACCEPTED);
-             parcelMatch.setStatus(Stat.MATCHED);
-                return "SUCCESSFULLY ACCEPTED";
-            } else {
-                return "FAILED TO ACCEPT : you have never accepted this request";
+
+    public String updateParcelToAccept(int parcelid){
+        ParcelMatch parcelMatch = repository.findById(parcelid);
+            if(parcelMatch.getTraveler()==ParcelMatchTraveler.ACCEPTED) {
+                if (parcelMatch.getCourier() == ParcelMatchedCourier.NODATA) {
+                    parcelMatch.setCourier(ParcelMatchedCourier.ACCEPTED);
+                    parcelMatch.setStatus(Stat.MATCHED);
+                    return "SUCCESSFULLY ACCEPTED";
+                } else {
+                    return "FAILED TO ACCEPT : you have never accepted this request";
+                }
+            }else {
+                return " Buddy Traveler have to accept first that you can .....chill  ";
             }
-        }else {
-            return " Buddy Traveler have to accept first that you can .....chill  ";
-        }
     }
     //---------------------------------Update Parcelmatchtraveler----------------------
 

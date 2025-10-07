@@ -10,11 +10,12 @@ import java.util.List;
 @Data
 public class ParcelResponseDTO {
 
-    public ParcelResponseDTO(Parcel parcel, Traveler traveler) {
+    public ParcelResponseDTO(Parcel parcel, Traveler traveler , int parcelmatchid) {
+        this.parcelmatchid=parcelmatchid;
         this.parcel = parcel;
         this.traveler = traveler;
     }
-
+   int parcelmatchid;
     Parcel parcel;
     Traveler traveler;
 

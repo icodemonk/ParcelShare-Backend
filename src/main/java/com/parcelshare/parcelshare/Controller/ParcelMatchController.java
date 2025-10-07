@@ -56,15 +56,15 @@ public class ParcelMatchController {
 
 
     @PreAuthorize("hasAnyRole('ADMIN','PARCEL')")
-    @PostMapping("/updatepreject")
-    public String updateParcelToReject(int id){
-       return service.updateParcelToReject(id);
+    @PostMapping("/updatepreject/{parcelid}")
+    public String updateParcelToReject(@PathVariable int parcelid){
+       return service.updateParcelToReject(parcelid);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','PARCEL')")
-    @PostMapping("/updatepaccept")
-    public String updateParcelToAccept(int id){
-        return service.updateParcelToAccept(id);
+    @PostMapping("/updatepaccept/{parcelid}")
+    public String updateParcelToAccept(@PathVariable int parcelid){
+        return service.updateParcelToAccept(parcelid);
     }
 
 
