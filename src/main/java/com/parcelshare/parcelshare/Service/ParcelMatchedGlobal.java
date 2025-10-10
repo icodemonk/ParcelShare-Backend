@@ -79,9 +79,15 @@ public class ParcelMatchedGlobal {
 //    filter request recived for parcel
 
     public List<ParcelResponseDTO> ParcelRequest(int user) {
-        List<ParcelMatch> TravelerMatchbyidall = repository.findByParcelid(user);
+        List<Parcel> parcels = parcelRepo.findByParcelcreaterid(user);
+        List<ParcelMatch> filterparcels =new ArrayList<>();
+        for (Parcel parcel : parcels) {
+            List<ParcelMatch> match = repository.findByParcelid(parcel.getId());
+            filterparcels.addAll(match);
+        }
+
         List<ParcelResponseDTO> filter = new ArrayList<>();
-        for (ParcelMatch parcelMatch : TravelerMatchbyidall) {
+        for (ParcelMatch parcelMatch : filterparcels) {
             if(parcelMatch.getTraveler() == ParcelMatchTraveler.ACCEPTED && parcelMatch.getCourier()==ParcelMatchedCourier.NODATA) {
                 Traveler traveler = new Traveler();
                 traveler = travelerRepo.findById(parcelMatch.getTravelerid());
@@ -95,10 +101,15 @@ public class ParcelMatchedGlobal {
     }
 
     public List<ParcelResponseDTO> Parcelmatched(int user) {
-        int id = user;
-        List<ParcelMatch> TravelerMatchbyidall = repository.findByParcelid(id);
+        List<Parcel> parcels = parcelRepo.findByParcelcreaterid(user);
+        List<ParcelMatch> filterparcels =new ArrayList<>();
+        for (Parcel parcel : parcels) {
+            List<ParcelMatch> match = repository.findByParcelid(parcel.getId());
+            filterparcels.addAll(match);
+        }
+
         List<ParcelResponseDTO> filter = new ArrayList<>();
-        for (ParcelMatch parcelMatch : TravelerMatchbyidall) {
+        for (ParcelMatch parcelMatch : filterparcels) {
             if (parcelMatch.getCourier() == ParcelMatchedCourier.ACCEPTED && parcelMatch.getTraveler() == ParcelMatchTraveler.ACCEPTED) {
                 Traveler traveler = new Traveler();
                 traveler = travelerRepo.findById(parcelMatch.getTravelerid());
@@ -111,9 +122,14 @@ public class ParcelMatchedGlobal {
         return filter;
     }
     public List<ParcelResponseDTO> AcceptedRequest(int user) {
-        List<ParcelMatch> TravelerMatchbyidall = repository.findByParcelid(user);
+        List<Parcel> parcels = parcelRepo.findByParcelcreaterid(user);
+        List<ParcelMatch> filterparcels =new ArrayList<>();
+        for (Parcel parcel : parcels) {
+            List<ParcelMatch> match = repository.findByParcelid(parcel.getId());
+            filterparcels.addAll(match);
+        }
         List<ParcelResponseDTO> filter = new ArrayList<>();
-        for (ParcelMatch parcelMatch : TravelerMatchbyidall) {
+        for (ParcelMatch parcelMatch : filterparcels) {
             if(parcelMatch.getTraveler() == ParcelMatchTraveler.ACCEPTED && parcelMatch.getCourier()==ParcelMatchedCourier.ACCEPTED) {
                 Traveler traveler = new Traveler();
                 traveler = travelerRepo.findById(parcelMatch.getTravelerid());
@@ -140,12 +156,14 @@ public class ParcelMatchedGlobal {
         }
     }
 
-    public String updateParcelToAccept(int parcelid){
-        ParcelMatch parcelMatch = repository.findById(parcelid);
+    public String updateParcelToAccept(int parcelMatchedId){
+
+        ParcelMatch parcelMatch = repository.findById(parcelMatchedId);
             if(parcelMatch.getTraveler()==ParcelMatchTraveler.ACCEPTED) {
                 if (parcelMatch.getCourier() == ParcelMatchedCourier.NODATA) {
                     parcelMatch.setCourier(ParcelMatchedCourier.ACCEPTED);
                     parcelMatch.setStatus(Stat.MATCHED);
+                    repository.save(parcelMatch);
                     return "SUCCESSFULLY ACCEPTED";
                 } else {
                     return "FAILED TO ACCEPT : you have never accepted this request";
