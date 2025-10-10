@@ -10,7 +10,6 @@ import java.util.Optional;
 @Repository
 public interface TravelerRepo extends JpaRepository<Traveler,Integer> {
     Traveler findById(int id);
-
     List<Traveler> findByTravelercreatorid(int travelercreatorid);
 
 }
